@@ -2,7 +2,7 @@ import gleam/io
 import argv
 
 import days/day01
-// import days/day02
+import days/day02
 // import days/day03
 // import days/day04
 // import days/day05
@@ -49,8 +49,12 @@ pub fn main()
 
 fn run(day, part)
 {
+  io.println("Running day " <> day <>
+             ", part " <> case part { One -> "1" Two -> "2"} <> ".")
+  //All the trailing Nils ensure each case has the same type, regardless of what the days do.
   case day {
-    "1" -> case part { One -> day01.part1() Two -> day01.part2() }
-    _ -> io.println("Invalid day.")
+    "1" -> { case part { One -> day01.part1() Two -> day01.part2() } Nil }
+    "2" -> { case part { One -> day02.part1() Two -> day02.part2() } Nil }
+    _   -> { io.println("Invalid day.") Nil }
   }
 }
