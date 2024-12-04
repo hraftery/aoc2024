@@ -6,8 +6,8 @@ import simplifile as file
 
 
 const day = "01"
-const input_file = "input/" <> day <> ".txt"
-//const input_file = "input/" <> day <> "_example.txt"
+//const input_file = "input/" <> day <> ".txt"
+const input_file = "input/" <> day <> "_example.txt"
 
 
 fn parse()
