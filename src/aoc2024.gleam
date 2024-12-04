@@ -3,8 +3,8 @@ import argv
 
 import days/day01
 import days/day02
-// import days/day03
-// import days/day04
+import days/day03
+import days/day04
 // import days/day05
 // import days/day06
 // import days/day07
@@ -47,14 +47,21 @@ pub fn main()
   }
 }
 
+fn run_helper(part, part1, part2)
+{
+  case part { One -> {part1() Nil} Two -> {part2() Nil} }
+  Nil //Ensure each day returns the same type, regardless of what the days do.
+}
+
 fn run(day, part)
 {
   io.println("Running day " <> day <>
              ", part " <> case part { One -> "1" Two -> "2"} <> ".")
-  //All the trailing Nils ensure each case has the same type, regardless of what the days do.
   case day {
-    "1" -> { case part { One -> day01.part1() Two -> day01.part2() } Nil }
-    "2" -> { case part { One -> day02.part1() Two -> day02.part2() } Nil }
-    _   -> { io.println("Invalid day.") Nil }
+    "1" -> run_helper(part, day01.part1, day01.part2)
+    "2" -> run_helper(part, day02.part1, day02.part2)
+    "3" -> run_helper(part, day03.part1, day03.part2)
+    "4" -> run_helper(part, day04.part1, day04.part2)
+    _   -> io.println("Invalid day.")
   }
 }
