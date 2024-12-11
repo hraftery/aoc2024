@@ -1,7 +1,9 @@
+import gleam/int
 import gleam/string
 import gleam/list.{Stop, Continue}
+import gleam/result
 import glearray.{type Array} as array
-import gleam/iterator
+import gleam/yielder
 import util/compass.{type Direction}
 
 
@@ -113,14 +115,14 @@ pub fn to_string(arr: Array2D(Char)) -> String
 pub fn locate(in arr: Array2D(a), one_that is_desired: fn(a) -> Bool) -> Result(Coord, Nil)
 {
   arr
-  |> array.iterate
-  |> iterator.index
-  |> iterator.fold_until(Error(Nil), fn(_, row_y) {
+  |> array.yield
+  |> yielder.index
+  |> yielder.fold_until(Error(Nil), fn(_, row_y) {
       let #(row, y) = row_y
       let inner_ret = row
-      |> array.iterate
-      |> iterator.index
-      |> iterator.fold_until(Error(Nil), fn(_, elem_x) {
+      |> array.yield
+      |> yielder.index
+      |> yielder.fold_until(Error(Nil), fn(_, elem_x) {
           let #(elem, x) = elem_x
           case is_desired(elem) {
             True  -> Stop(Ok(x))
