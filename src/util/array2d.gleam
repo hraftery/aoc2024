@@ -17,10 +17,26 @@ fn array_from_string(str: String) -> Array(Char)
   array.from_list(string.to_graphemes(str))
 }
 
+fn array_from_string_of_digits(str: String) -> Array(Int)
+{
+  str
+  |> string.to_graphemes()
+  |> list.map(int.parse)
+  |> result.values
+  |> array.from_list
+}
+
 pub fn from_list_of_strings(str_list: List(String)) -> Array2D(Char)
 {
   str_list
   |> list.map(array_from_string)
+  |> array.from_list
+}
+
+pub fn from_list_of_strings_of_digits(str_list: List(String)) -> Array2D(Int)
+{
+  str_list
+  |> list.map(array_from_string_of_digits)
   |> array.from_list
 }
 
@@ -134,4 +150,25 @@ pub fn locate(in arr: Array2D(a), one_that is_desired: fn(a) -> Bool) -> Result(
         Error(_) -> Continue(Error(Nil))
       }
     })
+}
+
+pub fn locate_all(in arr: Array2D(a), all_that is_desired: fn(a) -> Bool) -> Coords
+{
+  arr
+  |> array.yield
+  |> yielder.index
+  |> yielder.flat_map(fn(row_y) {
+      let #(row, y) = row_y
+      row
+      |> array.yield
+      |> yielder.index
+      |> yielder.filter_map(fn(elem_x) {
+          let #(elem, x) = elem_x
+          case is_desired(elem) {
+            True  -> Ok(#(x,y))
+            False -> Error(Nil)
+          }
+        })
+    })
+  |> yielder.to_list
 }
