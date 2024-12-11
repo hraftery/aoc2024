@@ -1,4 +1,3 @@
-import util/array2d
 import util/util
 import gleam/dict.{type Dict}
 import gleam/string

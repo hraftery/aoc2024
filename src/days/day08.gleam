@@ -1,8 +1,6 @@
-import gleam/list
 import gleam/io
 import gleam/string
-//import gleam/int
-//import gleam/list
+import gleam/list
 import gleam/dict
 import simplifile as file
 import util/util

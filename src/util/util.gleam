@@ -52,3 +52,41 @@ pub fn invert(the_dict: Dict(a,b)) -> Dict(b,List(a))
       None    -> [k]
     }})})
 }
+
+pub fn first_rest(the_list: List(a)) -> Result(#(a, List(a)), Nil)
+{
+  case the_list {
+    [first]         -> Ok(#(first, []))
+    [first, ..rest] -> Ok(#(first, rest))
+    _               -> Error(Nil)
+  }
+}
+
+pub fn init_last(the_list: List(a)) -> Result(#(List(a), a), Nil)
+{
+  case first_rest(the_list) {
+    Error(_)           -> Error(Nil)
+    Ok(#(first, rest)) -> Ok(
+      list.fold(rest, #([], first), fn(acc, x) {
+        #(list.append(acc.0, [acc.1]), x) // holy expensive Batman
+      }))
+  }
+}
+
+//Like list.split_while except it splits a list in two *after* the first
+//element that a given function returns False for.
+pub fn split_after(list list: List(a), satisfying predicate: fn(a) -> Bool) -> #(List(a), List(a))
+{
+  split_after_loop(list, predicate, [])
+}
+
+fn split_after_loop(list: List(a), f: fn(a) -> Bool, acc: List(a)) -> #(List(a), List(a))
+{
+  case list {
+    []              -> #(list.reverse(acc), [])
+    [first, ..rest] -> case f(first) {
+        False -> #(list.reverse([first, ..acc]), rest)
+        _     -> split_after_loop(rest, f, [first, ..acc])
+      }
+  }
+}
