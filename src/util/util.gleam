@@ -80,3 +80,18 @@ fn split_after_loop(list: List(a), f: fn(a) -> Bool, acc: List(a)) -> #(List(a),
       }
   }
 }
+
+pub fn list_split_at(list list: List(a), at n: Int) -> List(List(a))
+{
+  [list.take(list, n), list.drop(list, n)]
+}
+
+pub fn string_split_at(str str: String, at n: Int) -> List(String)
+{
+  [string.drop_end(str, n), string.drop_start(str, n)]
+}
+
+pub type DateTime
+// An external function that creates an instance of the type
+@external(erlang, "os", "timestamp")
+pub fn now() -> DateTime
