@@ -1,7 +1,7 @@
-import util/util
 import gleam/dict.{type Dict}
 import gleam/string
 import gleam/list
+import gleam/pair
 
 
 pub type Char = String
@@ -28,7 +28,7 @@ fn import_row(str: String, ignore: Char, y: Int) -> List(#(Coord, Char))
 {
   str
   |> string.to_graphemes
-  |> list.index_map(util.id2)
+  |> list.index_map(pair.new)
   |> list.filter(fn (char_x) { char_x.0 != ignore })
   |> list.map(fn (char_x) { #(#(char_x.1, y), char_x.0) })
 }

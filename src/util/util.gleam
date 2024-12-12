@@ -4,16 +4,6 @@ import gleam/option.{Some, None}
 import gleam/string
 import gleam/dict.{type Dict}
 
-//Seems a significant oversight from the standard library?
-pub fn id(x : a) -> a
-{
-  x
-}
-pub fn id2(x : a, y : b) -> #(a, b)
-{
-  #(x,y)
-}
-
 //For brevity
 pub fn abs(i : Int) -> Int
 {
