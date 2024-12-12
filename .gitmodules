@@ -1,0 +1,3 @@
+[submodule "src/glearray"]
+	path = src/glearray
+	url = https://github.com/Hiten-Tandon/glearray.git
