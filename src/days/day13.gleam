@@ -23,13 +23,13 @@ fn parse()
   |> list.map(parse_machine)
 }
 
-pub type Coord = #(Int, Int)
+pub type Vec2 = #(Int, Int)
 pub type Machine {
-  Machine(a: Coord, b: Coord, p: Coord)
+  Machine(a: Vec2, b: Vec2, p: Vec2)
 }
 pub type Play = #(Int, Int) //number of A presses, number of B presses
 
-fn parse_machine_coord(re: Regexp, input: String) -> Coord
+fn parse_machine_vector(re: Regexp, input: String) -> Vec2
 {
   let assert [x, y] = regexp.scan(re, input)
   |> util.extract_and_flatten_matches
@@ -45,9 +45,9 @@ fn parse_machine(input: String) -> Machine
   let assert Ok(re2) = regexp.from_string("Button B: X\\+([0-9]+), Y\\+([0-9]+)")
   let assert Ok(re3) = regexp.from_string("Prize: X=([0-9]+), Y=([0-9]+)")
   
-  Machine(parse_machine_coord(re1, input),
-          parse_machine_coord(re2, input),
-          parse_machine_coord(re3, input))
+  Machine(parse_machine_vector(re1, input),
+          parse_machine_vector(re2, input),
+          parse_machine_vector(re3, input))
 }
 
 fn solve_machine(m: Machine) -> Result(Play, Nil)

@@ -101,7 +101,6 @@ pub fn now() -> DateTime
 pub fn extract_and_flatten_matches(matches: List(Match)) -> List(String)
 {
   list.flat_map(matches, fn(match) {
-    //Match(content: String, submatches: List(Option(String)))
     list.map(match.submatches, fn(submatch) {
       case submatch {
         Some(x) -> x
@@ -154,4 +153,9 @@ pub fn solve_two_by_two_equations(a1: Float, b1: Float, c1: Float,
       InfiniteTwoByTwoSolutions(#(c1/.b1, -1.*.a1/.b1))
     }
   }
+}
+
+pub fn positive_modulo(i: Int, n: Int) -> Int
+{
+  {i % n + n} % n
 }
