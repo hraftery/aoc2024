@@ -3,6 +3,8 @@ import gleam/list
 import gleam/option.{Some, None}
 import gleam/string
 import gleam/dict.{type Dict}
+import gleam/regexp.{type Match}
+
 
 //For brevity
 pub fn abs(i : Int) -> Int
@@ -95,3 +97,61 @@ pub type DateTime
 // An external function that creates an instance of the type
 @external(erlang, "os", "timestamp")
 pub fn now() -> DateTime
+
+pub fn extract_and_flatten_matches(matches: List(Match)) -> List(String)
+{
+  list.flat_map(matches, fn(match) {
+    //Match(content: String, submatches: List(Option(String)))
+    list.map(match.submatches, fn(submatch) {
+      case submatch {
+        Some(x) -> x
+        None    -> ""
+      }
+    })
+  })
+}
+
+pub type TwoByTwoSolution {
+  UniqueTwoByTwoSolution(#(Float,Float))    // 1 solution:  #(x, y) where the solution is x=x, y=y
+  InfiniteTwoByTwoSolutions(#(Float,Float)) // ∞ solutions: #(a, b) where solutions are x=t, y=a+bt for any t
+  NoTwoByTwoSolution                        // 0 solutions
+}
+
+// Solve two simultaneous equations in two unknowns, where:
+//   a1*x + b1*y = c1 (equation 1)
+//   a2*x + b2*y = c2 (equation 2)
+// All coefficients need to be non-zero!
+// For example:
+//   solve_two_by_two_equations(3., 2., 36., 5., 4., 64.)) == UniqueTwoByTwoSolution(#(8.0, 6.0))
+//   solve_two_by_two_equations(1., 3., 5., 2., 6., 7.))   == NoTwoByTwoSolution
+//   solve_two_by_two_equations(1., 2., 10., 2., 4., 20.)) == InfiniteTwoByTwoSolutions(#(5.0, -0.5))
+pub fn solve_two_by_two_equations(a1: Float, b1: Float, c1: Float,
+                                  a2: Float, b2: Float, c2: Float) -> TwoByTwoSolution
+{
+  //Possible floating point imprecision here. But acceptable tolerance only depends on
+  //floating point precision of the x calculation below, which I'm not sure of.
+  let parallel   = a1/.a2 == b1/.b2
+  let coincident = parallel && b1/.b2 == c1/.c2 //possible floating point error here
+
+  case parallel, coincident {
+    False, _      -> {
+      // (1) * b2  => a1*x*b2 + b1*y*b2 = c1*b2  ... (3)
+      // (2) * b1  => a2*x*b1 + b2*y*b1 = c2*b1  ... (4)
+      // (3) - (4) => a1*x*b2 - a2*x*b1 = c1*b2 - c2*b1
+      //           => x*(a1*b2 - a2*b1) = c1*b2 - c2*b1
+      //           => x = (c1*b2 - c2*b1) / (a1*b2 - a2*b1)
+      let x = {c1*.b2 -. c2*.b1} /. {a1*.b2 -. a2*.b1}
+      // (1)       => b1*y = c1 - a1*x
+      //           =>    y = (c1 - a1*x) / b1
+      UniqueTwoByTwoSolution(#(x, {c1 -. a1*.x} /. b1))
+    }
+    True,  False  -> {
+      NoTwoByTwoSolution
+    }
+    True,  True   -> {
+      // (1),x=t  => y = (c1 - a1*t) / b1
+      //           = c1/b1 + (-a1/b1)*t
+      InfiniteTwoByTwoSolutions(#(c1/.b1, -1.*.a1/.b1))
+    }
+  }
+}
