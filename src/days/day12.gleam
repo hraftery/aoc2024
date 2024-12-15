@@ -146,10 +146,11 @@ fn do_find_perimeter(start: Edge, curr: Edge, remaining: List(Edge)) -> Perimete
 
 fn count_sides(perimeter: Perimeter) -> Int
 {
-  let assert Ok(#(first, rest)) = util.first_rest(perimeter)
+  let assert Ok(first) = list.first(perimeter)
 
   perimeter
-  |> list.zip(list.flatten([rest, [first]])) //pairs of neighbouring edges
+  |> list.append([first]) // why so hard to add the first to the end?
+  |> list.window_by_2
   |> list.filter(fn (x) { x.0.1 != x.1.1 }) //if direction doesn't match, it's a corner
   |> list.length //in a polygon the number of corners is the number of sides
 }
