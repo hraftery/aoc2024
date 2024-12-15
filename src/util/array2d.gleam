@@ -92,6 +92,18 @@ pub fn num_cols(arr: Array2D(a)) -> Int
   array.length(first_row)
 }
 
+pub fn coords(arr: Array2D(a)) -> Coords
+{
+  let xs = list.range(0, num_cols(arr) - 1)
+  let ys = list.range(0, num_rows(arr) - 1)
+
+  list.flat_map(xs, fn (x) {
+    list.map(ys, fn (y) {
+      #(x, y)
+    })
+  })
+}
+
 pub fn does_vector_fit(arr: Array2D(a), x: Int, y: Int, dir: Direction, len: Int)
 {
   let x_max = num_cols(arr) - 1
