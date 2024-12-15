@@ -36,6 +36,12 @@ pub fn split_until(list list: List(a), satisfying predicate: fn(a) -> Bool) -> #
   list.split_while(list, fn(a) { ! predicate(a) })
 }
 
+//Opposite of list.contains
+pub fn missing(list: List(a), elem: a) -> Bool
+{
+  !list.contains(list, elem)
+}
+
 pub fn invert(the_dict: Dict(a,b)) -> Dict(b,List(a))
 {
   dict.fold(the_dict, dict.new(), fn(acc, k, v) {

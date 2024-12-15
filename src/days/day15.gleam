@@ -4,14 +4,16 @@ import gleam/list
 import gleam/int
 import gleam/dict
 import simplifile as file
+import util/util
 import util/matrix.{Matrix, type Matrix, type Char}
-import util/compass.{type Direction, type Coord}
+import util/compass.{type Direction, type Coord, type Coords}
 
 
 const day = "15"
 const input_file = "input/" <> day <> ".txt"
 //const input_file = "input/" <> day <> "_example.txt"
 //const input_file = "input/" <> day <> "_example2.txt"
+//const input_file = "input/" <> day <> "_example3.txt"
 
 fn parse() -> #(Matrix(Char), List(Direction))
 {
@@ -82,6 +84,74 @@ fn shift(map: Matrix(Char), start_pt: Coord, dir: Direction, end_pt: Coord) -> M
   }
 }
 
+fn widen(map: Matrix(Char)) -> Matrix(Char)
+{
+  let data = dict.fold(map.data, dict.new(), fn(acc, k, v) {
+    let #(x,y) = k
+    case v {
+      "#" -> { acc |> dict.insert(#(x*2,y), "#") |> dict.insert(#(x*2+1,y), "#") }
+      "@" -> { acc |> dict.insert(#(x*2,y), "@")                                 }
+      "O" -> { acc |> dict.insert(#(x*2,y), "[") |> dict.insert(#(x*2+1,y), "]") }
+      _   -> panic as "Unexpected map value."
+    }
+  })
+  Matrix(data:data, num_rows:map.num_rows, num_cols:map.num_cols*2)
+}
+
+fn move2(map: Matrix(Char), dir: Direction) -> Matrix(Char)
+{
+  let assert Ok(curr_pt) = matrix.find(map, fn(v) { v == "@" })
+  //let _ = io.debug(get_mass(map, dir, [curr_pt]))
+  case get_mass(map, dir, [curr_pt]) {
+    Error(_) -> map //can't move
+    Ok(mass) -> shift_mass(map, mass, dir)
+  }
+}
+
+fn get_mass(map: Matrix(Char), dir: Direction, mass: Coords) -> Result(Coords, Nil)
+{
+  let new_pts = mass
+  |> list.map(compass.get_neighbour(_, dir))
+  |> list.filter(util.missing(mass, _))
+
+  let new_vals = list.map(new_pts, dict.get(map.data, _))
+  let is_blocked = list.any(new_vals, fn(v) { v == Ok("#") })
+  let is_growing = list.any(new_vals, fn(v) { v == Ok("[") || v == Ok("]") })
+  
+  case is_blocked, is_growing {
+    True,  _     -> Error(Nil)  //Blocked. Look no further.
+    False, False -> Ok(mass)    //new_pts are empty, so free to move!
+    False, True  -> {           //Otherwise we need to grow and keeping looking past the mass
+      let new_mass = new_pts
+      |> list.flat_map(fn(pt) {
+        let #(x,y) = pt
+        case dict.get(map.data, pt) {
+          Ok("]")  -> [#(x-1,y), pt]
+          Ok("[")  -> [pt, #(x+1,y)]
+          Error(_) -> [] //don't include empty cells in mass
+          _        -> panic as "Unexpected map value"
+        }
+      })
+      |> list.unique
+      |> list.append(mass)
+      get_mass(map, dir, new_mass)
+    }
+  }
+}
+
+fn shift_mass(map: Matrix(Char), mass: Coords, dir: Direction) -> Matrix(Char)
+{
+  let data = map.data
+  |> dict.fold(dict.new(), fn(d, k, v) {
+    case list.contains(mass, k) {
+      False -> dict.insert(d, k, v) //add with no change
+      True  -> dict.insert(d, compass.get_neighbour(k, dir), v) //shift
+    }
+  })
+  
+  Matrix(..map, data:data)
+}
+
 pub fn part1()
 {
   let #(map, dirs) = parse()
@@ -106,23 +176,34 @@ pub fn part1()
   |> int.sum
 
   io.debug(ans)
-  // io.println("")
-  // io.println("Final state:")
-  // draw(map)
-
-  // let map = move(map, compass.E)
-  // draw(map)
-  // let map = move(map, compass.E)
-  // draw(map)
-  // let map = move(map, compass.E)
-  // draw(map)
-  // let map = move(map, compass.S)
-  // draw(map)
 }
 
 pub fn part2()
 {
-  io.println("Day " <> day <> ", part 2.")
+  let #(map, dirs) = parse()
+
+  let map = widen(map)
+
+  // io.println("Initial state:")
+  // draw(map)
+
+  let map = list.fold(dirs, map, fn(map, dir) {
+    // let map = move2(map, dir)
+    // io.println("")
+    // io.print("Move ")
+    // io.debug(dir)
+    // draw(map)
+    // map
+    move2(map, dir)
+  })
+
+  let ans = map.data
+  |> dict.filter(fn(_k, v) { v == "[" })
+  |> dict.keys
+  |> list.map(fn(coord) { coord.0 + 100 * coord.1 })
+  |> int.sum
+
+  io.debug(ans)
 }
 
 
