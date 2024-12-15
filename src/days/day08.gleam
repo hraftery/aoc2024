@@ -4,7 +4,8 @@ import gleam/list
 import gleam/dict
 import simplifile as file
 import util/util
-import util/matrix.{type Coords}
+import util/matrix
+import util/compass.{type Coords}
 import gleam/yielder
 
 

@@ -4,8 +4,8 @@ import gleam/string
 //import gleam/int
 //import gleam/list
 import simplifile as file
-import util/array2d.{type Array2D, type Char, type Coord, type Coords}
-import util/compass.{type Direction}
+import util/array2d.{type Array2D, type Char}
+import util/compass.{type Direction, type Coord, type Coords}
 
 
 const day = "06"

@@ -190,3 +190,16 @@ pub fn part2()
 
   part2_loop(0, input)
 }
+
+
+pub fn suppress_unused_warnings() -> Bool
+{
+  let input = parse()
+  let pt_set = set.from_list(list.map(input, fn(r) { r.p }))
+  
+  is_horizontally_symmetrical(input) &&
+  is_horizontally_symmetrical_fast(pt_set) &&
+  is_quadrantally_symmetrical(input) &&
+  is_continuous(input) &&
+  has_horizontal_line(input)
+}
