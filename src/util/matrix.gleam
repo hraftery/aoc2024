@@ -1,3 +1,4 @@
+import gleam/io
 import gleam/dict.{type Dict}
 import gleam/string
 import gleam/list
@@ -42,5 +43,21 @@ pub fn find(in mat: Matrix(a), one_that is_desired: fn(a) -> Bool) -> Result(Coo
       True  -> Ok(coord_elem.0)
       False -> Error(Nil)
     }
+  })
+}
+
+pub fn draw(mat: Matrix(Char), missing_char: Char)
+{
+  let xs = list.range(0, mat.num_cols - 1)
+  let ys = list.range(0, mat.num_rows - 1)
+
+  list.each(ys, fn (y) {
+    list.each(xs, fn (x) {
+      case dict.get(mat.data, #(x,y)) {
+        Ok(c)    -> io.print(c)
+        Error(_) -> io.print(missing_char)
+      }
+    })
+    io.println("")
   })
 }

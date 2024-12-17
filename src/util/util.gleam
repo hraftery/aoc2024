@@ -136,7 +136,7 @@ pub fn solve_two_by_two_equations(a1: Float, b1: Float, c1: Float,
   //Possible floating point imprecision here. But acceptable tolerance only depends on
   //floating point precision of the x calculation below, which I'm not sure of.
   let parallel   = a1/.a2 == b1/.b2
-  let coincident = parallel && b1/.b2 == c1/.c2 //possible floating point error here
+  let coincident = parallel && b1/.b2 == c1/.c2
 
   case parallel, coincident {
     False, _      -> {

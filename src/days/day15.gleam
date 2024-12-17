@@ -34,22 +34,6 @@ fn parse() -> #(Matrix(Char), List(Direction))
     }))
 }
 
-fn draw(mat: Matrix(Char))
-{
-  let xs = list.range(0, mat.num_cols - 1)
-  let ys = list.range(0, mat.num_rows - 1)
-
-  list.each(ys, fn (y) {
-    list.each(xs, fn (x) {
-      case dict.get(mat.data, #(x,y)) {
-        Ok(c)    -> io.print(c)
-        Error(_) -> io.print(".")
-      }
-    })
-    io.println("")
-  })
-}
-
 fn move(map: Matrix(Char), dir: Direction) -> Matrix(Char)
 {
   let assert Ok(curr_pt) = matrix.find(map, fn(v) { v == "@" })
@@ -157,14 +141,14 @@ pub fn part1()
   let #(map, dirs) = parse()
 
   // io.println("Initiial state:")
-  // draw(map)
+  // matrix.draw(map, ".")
 
   let map = list.fold(dirs, map, fn(map, dir) {
     // let map = move(map, dir)
     // io.println("")
     // io.print("Move ")
     // io.debug(dir)
-    // draw(map)
+    // matrix.draw(map, ".")
     // map
     move(map, dir)
   })
@@ -185,14 +169,14 @@ pub fn part2()
   let map = widen(map)
 
   // io.println("Initial state:")
-  // draw(map)
+  // matrix.draw(map, ".")
 
   let map = list.fold(dirs, map, fn(map, dir) {
     // let map = move2(map, dir)
     // io.println("")
     // io.print("Move ")
     // io.debug(dir)
-    // draw(map)
+    // matrix.draw(map, ".")
     // map
     move2(map, dir)
   })
@@ -212,5 +196,5 @@ pub fn suppress_unused_warnings()
   let #(map, _dirs) = parse()
 
   io.println("Initiial state:")
-  draw(map)
+  matrix.draw(map, ".")
 }
