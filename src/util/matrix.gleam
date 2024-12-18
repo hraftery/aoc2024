@@ -33,6 +33,13 @@ fn import_row(str: String, ignore: Char, y: Int) -> List(#(Coord, Char))
   |> list.map(fn (char_x) { #(#(char_x.1, y), char_x.0) })
 }
 
+pub fn valid_coord(matrix: Matrix(a), coord: Coord) -> Bool
+{
+  let #(x,y) = coord
+  x >= 0 && x < matrix.num_cols &&
+  y >= 0 && y < matrix.num_rows
+}
+
 //like list.find but for Matrix, and returns the coord not the element. PS. why is this so hard?
 pub fn find(in mat: Matrix(a), one_that is_desired: fn(a) -> Bool) -> Result(Coord, Nil)
 {

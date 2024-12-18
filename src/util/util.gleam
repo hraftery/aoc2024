@@ -170,3 +170,13 @@ pub fn equals(a: Int, b: Int) -> Bool
 {
   a == b
 }
+
+pub fn decrement(i: Int) -> Int
+{
+  i - 1
+}
+
+pub fn get(l: List(a), n: Int) -> Result(a, Nil)
+{
+  list.first(list.drop(l, n))
+}
