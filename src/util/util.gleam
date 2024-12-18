@@ -165,3 +165,8 @@ pub fn positive_modulo(i: Int, n: Int) -> Int
 {
   {i % n + n} % n
 }
+
+pub fn equals(a: Int, b: Int) -> Bool
+{
+  a == b
+}
