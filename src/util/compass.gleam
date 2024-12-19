@@ -1,3 +1,5 @@
+import gleam/list
+
 pub type Direction {
   N
   NE
@@ -8,6 +10,10 @@ pub type Direction {
   W
   NW
 }
+
+pub type Coord = #(Int, Int)
+pub type Coords = List(Coord)
+
 
 //Oh how I miss integer enums. The next ~100 lines is just hand made
 //functionality normally implicitly provided by integer enums.
@@ -99,5 +105,36 @@ pub fn opposite(dir: Direction) -> Direction
     SW -> NE
     W  -> E
     NW -> SE
+  }
+}
+
+pub fn get_neighbour(coord: Coord, dir: Direction) -> Coord
+{
+  let #(x, y) = coord
+  case dir {
+    N  -> #(x    , y - 1)
+    NE -> #(x + 1, y - 1)
+    E  -> #(x + 1, y    )
+    SE -> #(x + 1, y + 1)
+    S  -> #(x    , y + 1)
+    SW -> #(x - 1, y + 1)
+    W  -> #(x - 1, y    )
+    NW -> #(x - 1, y - 1)
+  }
+}
+
+pub fn get_neighbours_in_direction(coord: Coord, dir: Direction, len: Int) -> Coords
+{
+  let #(x, y) = coord
+  let mod = len - 1 //don't include starting point
+  case dir {
+    N  -> list.zip(list.repeat(x, len),    list.range(y, y - mod))
+    NE -> list.zip(list.range(x, x + mod), list.range(y, y - mod))
+    E  -> list.zip(list.range(x, x + mod), list.repeat(y, len))
+    SE -> list.zip(list.range(x, x + mod), list.range(y, y + mod))
+    S  -> list.zip(list.repeat(x, len),    list.range(y, y + mod))
+    SW -> list.zip(list.range(x, x - mod), list.range(y, y + mod))
+    W  -> list.zip(list.range(x, x - mod), list.repeat(y, len))
+    NW -> list.zip(list.range(x, x - mod), list.range(y, y - mod))
   }
 }

@@ -4,13 +4,11 @@ import gleam/list.{Stop, Continue}
 import gleam/result
 import glearray.{type Array} as array
 import gleam/yielder
-import util/compass.{type Direction}
+import util/compass.{type Coord, type Coords, type Direction}
 
 
 pub type Array2D(a) = Array(Array(a))
 pub type Char = String
-pub type Coord = #(Int, Int)
-pub type Coords = List(Coord)
 
 fn array_from_string(str: String) -> Array(Char)
 {
@@ -51,33 +49,13 @@ pub fn get(arr: Array2D(a), pt: Coord) -> Result(a, Nil)
 
 pub fn get_neighbour(arr: Array2D(a), pt: Coord, dir: Direction) -> #(Coord, Result(a, Nil))
 {
-  let #(x, y) = pt
-  let neighbour_pt = case dir {
-    compass.N  -> #(x    , y - 1)
-    compass.NE -> #(x + 1, y - 1)
-    compass.E  -> #(x + 1, y    )
-    compass.SE -> #(x + 1, y + 1)
-    compass.S  -> #(x    , y + 1)
-    compass.SW -> #(x - 1, y + 1)
-    compass.W  -> #(x - 1, y    )
-    compass.NW -> #(x - 1, y - 1)
-  }
+  let neighbour_pt = compass.get_neighbour(pt, dir)
   #(neighbour_pt, get(arr, neighbour_pt))
 }
 
 pub fn take(arr: Array2D(a), x: Int, y: Int, dir: Direction, len: Int) -> List(a)
 {
-  let mod = len - 1 //don't include starting point
-  let xs_ys = case dir {
-    compass.N  -> list.zip(list.repeat(x, len),    list.range(y, y - mod))
-    compass.NE -> list.zip(list.range(x, x + mod), list.range(y, y - mod))
-    compass.E  -> list.zip(list.range(x, x + mod), list.repeat(y, len))
-    compass.SE -> list.zip(list.range(x, x + mod), list.range(y, y + mod))
-    compass.S  -> list.zip(list.repeat(x, len),    list.range(y, y + mod))
-    compass.SW -> list.zip(list.range(x, x - mod), list.range(y, y + mod))
-    compass.W  -> list.zip(list.range(x, x - mod), list.repeat(y, len))
-    compass.NW -> list.zip(list.range(x, x - mod), list.range(y, y - mod))
-  }
+  let xs_ys = compass.get_neighbours_in_direction(#(x, y), dir, len)
   list.filter_map(xs_ys, fn (x_y) { get(arr, x_y) }) //drop any that are Error
 }
 
@@ -90,6 +68,18 @@ pub fn num_cols(arr: Array2D(a)) -> Int
 {
   let assert Ok(first_row) = array.get(arr, 0)
   array.length(first_row)
+}
+
+pub fn coords(arr: Array2D(a)) -> Coords
+{
+  let xs = list.range(0, num_cols(arr) - 1)
+  let ys = list.range(0, num_rows(arr) - 1)
+
+  list.flat_map(xs, fn (x) {
+    list.map(ys, fn (y) {
+      #(x, y)
+    })
+  })
 }
 
 pub fn does_vector_fit(arr: Array2D(a), x: Int, y: Int, dir: Direction, len: Int)
@@ -127,7 +117,7 @@ pub fn to_string(arr: Array2D(Char)) -> String
   |> string.concat
 }
 
-//like list.find but for Array2D, and returns the coords not the element. PS. why is this so hard?
+//like list.find but for Array2D, and returns the coord not the element. PS. why is this so hard?
 pub fn locate(in arr: Array2D(a), one_that is_desired: fn(a) -> Bool) -> Result(Coord, Nil)
 {
   arr

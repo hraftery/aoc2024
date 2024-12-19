@@ -12,13 +12,13 @@ import days/day08
 import days/day09
 import days/day10
 import days/day11
-// import days/day12
-// import days/day13
-// import days/day14
-// import days/day15
-// import days/day16
-// import days/day17
-// import days/day18
+import days/day12
+import days/day13
+import days/day14
+import days/day15
+import days/day16
+import days/day17
+import days/day18
 // import days/day19
 // import days/day20
 // import days/day21
@@ -69,6 +69,13 @@ fn run(day, part)
     "9"  -> run_helper(part, day09.part1, day09.part2)
     "10" -> run_helper(part, day10.part1, day10.part2)
     "11" -> run_helper(part, day11.part1, day11.part2)
+    "12" -> run_helper(part, day12.part1, day12.part2)
+    "13" -> run_helper(part, day13.part1, day13.part2)
+    "14" -> run_helper(part, day14.part1, day14.part2)
+    "15" -> run_helper(part, day15.part1, day15.part2)
+    "16" -> run_helper(part, day16.part1, day16.part2)
+    "17" -> run_helper(part, day17.part1, day17.part2)
+    "18" -> run_helper(part, day18.part1, day18.part2)
     _   -> io.println("Invalid day.")
   }
 }
