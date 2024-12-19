@@ -129,8 +129,7 @@ pub fn part2()
 
     let can_reach_end_pt = make_graph_fn2(space)
     |> dijkstra.dijkstra(start_pt)
-    |> fn(sp) { sp.distances }
-    |> dict.has_key(end_pt)
+    |> dijkstra.has_path_to(end_pt)
 
     case can_reach_end_pt {
       True  -> Continue(space)

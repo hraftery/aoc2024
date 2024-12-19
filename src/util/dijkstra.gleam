@@ -76,6 +76,11 @@ pub fn test_dijkstra() -> Bool
     #(8, 14)])
 }
 
+pub fn has_path_to(paths: ShortestPaths(node_id), dest: node_id)
+{
+  dict.has_key(paths.distances, dest)
+}
+
 pub fn shortest_path(paths: ShortestPaths(node_id), dest: node_id) -> #(List(node_id), Int)
 {
   let path = do_shortest_path(paths.predecessors, dest)
