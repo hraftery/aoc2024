@@ -39,7 +39,7 @@ fn do_find_good_trails(map: Array2D(Int), path: Coords, curr_pt: Coord) -> List(
   case curr_val == 9 {
     True  -> [list.reverse([curr_pt, ..path])]
     False -> {
-      let neighbours = [compass.N, compass.E, compass.S, compass.W]
+      let neighbours = compass.cardinals
                        |> list.map(array2d.get_neighbour(map, curr_pt, _))
       let new_pts = list.filter_map(neighbours, fn(n) {
         let #(pt, val) = n

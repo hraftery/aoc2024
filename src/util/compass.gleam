@@ -1,6 +1,10 @@
+import gleam/dict.{type Dict}
 import gleam/list
+import gleam/set
+import util/util
 
-pub type Direction {
+pub type Direction
+{
   N
   NE
   E
@@ -13,19 +17,14 @@ pub type Direction {
 
 pub type Coord = #(Int, Int)
 pub type Coords = List(Coord)
+pub type Directions = List(Direction)
 
-
-//Oh how I miss integer enums. The next ~100 lines is just hand made
-//functionality normally implicitly provided by integer enums.
-pub fn list_clockwise() -> List(Direction)
-{
-  [N, NE, E, SE, S, SW, W, NW]
-}
-
-pub fn list_anticlockwise() -> List(Direction)
-{
-  [N, NW, W, SW, S, SE, E, NE]
-}
+//Oh how I miss integer enums. The next ~100 lines is mostly just hand
+//made functionality normally implicitly provided by integer enums.
+pub const all:       Directions = [N, NE, E, SE, S, SW, W, NW]
+pub const all_ccw:   Directions = [N, NW, W, SW, S, SE, E, NE]
+pub const cardinals: Directions = [N, E, S, W]
+pub const ordinals:  Directions = [NE, SE, SW, NW]
 
 pub fn to_degrees(dir: Direction) -> Int
 {
@@ -137,4 +136,38 @@ pub fn get_neighbours_in_direction(coord: Coord, dir: Direction, len: Int) -> Co
     W  -> list.zip(list.range(x, x - mod), list.repeat(y, len))
     NW -> list.zip(list.range(x, x - mod), list.range(y, y - mod))
   }
+}
+
+pub fn get_neighbours(coord: Coord, max_dist: Int, directions: Directions) -> Dict(Coord, Int)
+{
+  do_get_neighbours([coord], 1, max_dist, directions, dict.new())
+  |> dict.delete(coord) //don't include starting point
+}
+
+fn do_get_neighbours(front_line: Coords, dist: Int, max_dist: Int, directions: Directions, ret: Dict(Coord, Int)) -> Dict(Coord, Int)
+{
+  case dist > max_dist
+  {
+    True -> ret
+    False -> {
+      let new_coords = front_line
+        |> list.fold(set.new(), fn(acc, coord) {
+          list.fold(directions, acc, fn(acc, d) {
+            set.insert(acc, get_neighbour(coord, d))
+          })
+        })
+        |> set.filter(util.has_no_key(ret, _))
+        |> set.to_list
+
+      let ret = list.fold(new_coords, ret, fn(acc, coord) {
+        dict.insert(acc, coord, dist)
+      })
+      do_get_neighbours(new_coords, dist + 1, max_dist, directions, ret)
+    }
+  }
+}
+
+pub fn get_direction(coord_pair: #(Coord, Coord)) -> Result(Direction, Nil) {
+  [N, NE, E, SE, S, SW, W, NW]
+  |> list.find(fn(d) { get_neighbour(coord_pair.0, d) == coord_pair.1 })
 }

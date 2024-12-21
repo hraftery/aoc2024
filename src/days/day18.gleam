@@ -60,7 +60,7 @@ type NodeId = Coord
 fn make_graph_fn(input: Matrix(Char)) -> SuccessorNodes(NodeId)
 {
   fn(coord: NodeId) -> Dict(NodeId, Int) {
-    [compass.N, compass.E, compass.S, compass.W]
+    compass.cardinals
     |> list.map(fn(d) { compass.get_neighbour(coord, d) })
     |> list.filter(fn(coord) {
       case matrix.valid_coord(input, coord), dict.get(input.data, coord) {
@@ -81,7 +81,7 @@ fn make_graph_fn2(coords: Set(Coord)) -> SuccessorNodes(Coord)
   let size = space_size()
 
   fn(coord: Coord) -> Dict(Coord, Int) {
-    [compass.N, compass.E, compass.S, compass.W]
+    compass.cardinals
     |> list.map(fn(d) { compass.get_neighbour(coord, d) })
     |> list.filter(fn(coord) {
       coord.0 >= 0 && coord.0 < size.0 &&

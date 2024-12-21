@@ -32,7 +32,7 @@ fn make_graph_fn(input: Matrix(Char)) -> SuccessorNodes(NodeId)
 {
   fn(n: NodeId) -> Dict(NodeId, Int) {
     let #(coord, dir) = n
-    [compass.N, compass.E, compass.S, compass.W]
+    compass.cardinals
     |> list.filter(fn(d) { d != compass.opposite(dir) }) //don't go backwards
     |> list.map(fn(d) { #(compass.get_neighbour(coord, d), d) })
     |> list.filter(fn(coord_dir) {

@@ -51,7 +51,7 @@ pub fn part1()
   let all_vectors =
     list.flat_map(list.range(0, x_max),
                   fn (x) { list.flat_map(list.range(0, y_max),
-                                         fn (y) { list.map(compass.list_clockwise(),
+                                         fn (y) { list.map(compass.cardinals,
                                                            fn (dir) { #(x, y, dir) })})})
   
   let count = list.count(all_vectors, fn (x_y_dir) { does_match(input, "XMAS", x_y_dir.0, x_y_dir.1, x_y_dir.2) })

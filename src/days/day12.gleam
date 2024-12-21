@@ -68,7 +68,7 @@ fn expand_region(map: Array2D(Char), region_acc: RegionAcc) -> Region
   //io.debug(region_acc)
   let in = RegionAcc(..region_acc, front_line: [])
   let out = list.fold(region_acc.front_line, in, fn(outer_acc, pt) {
-    [compass.N, compass.E, compass.S, compass.W]
+    compass.cardinals
     |> list.map(fn(dir) { #(dir, array2d.get_neighbour(map, pt, dir)) })
     |> list.fold(outer_acc, fn(acc, dir_neighbour) {
       case dir_neighbour.1 {

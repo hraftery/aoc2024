@@ -42,6 +42,12 @@ pub fn missing(list: List(a), elem: a) -> Bool
   !list.contains(list, elem)
 }
 
+//Opposite of dict.has_key
+pub fn has_no_key(dict: Dict(a, _), key: a) -> Bool
+{
+  !dict.has_key(dict, key)
+}
+
 pub fn invert(the_dict: Dict(a,b)) -> Dict(b,List(a))
 {
   dict.fold(the_dict, dict.new(), fn(acc, k, v) {
@@ -166,10 +172,11 @@ pub fn positive_modulo(i: Int, n: Int) -> Int
   {i % n + n} % n
 }
 
-pub fn equals(a: Int, b: Int) -> Bool
-{
-  a == b
-}
+pub fn equals(a: Int, b: Int) -> Bool { a == b }
+pub fn gt    (a: Int, b: Int) -> Bool { a > b  }
+pub fn ge    (a: Int, b: Int) -> Bool { a >= b }
+pub fn lt    (a: Int, b: Int) -> Bool { a < b  }
+pub fn le    (a: Int, b: Int) -> Bool { a <= b }
 
 pub fn decrement(i: Int) -> Int
 {
@@ -179,4 +186,12 @@ pub fn decrement(i: Int) -> Int
 pub fn get(l: List(a), n: Int) -> Result(a, Nil)
 {
   list.first(list.drop(l, n))
+}
+
+pub fn insert_if_none(d: Dict(a, b), k: a, v: b) -> Dict(a, b)
+{
+  case dict.has_key(d, k) {
+    True  -> d
+    False -> dict.insert(d, k, v)
+  }
 }
