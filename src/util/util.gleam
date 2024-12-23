@@ -248,3 +248,8 @@ pub fn apply(input: a, times: Int, f: fn(a) -> a) -> a
     _ -> apply(f(input), times - 1, f)
   }
 }
+
+pub fn common_elements(list1: List(a), list2: List(a)) -> List(a)
+{
+  list.filter(list1, list.contains(list2, _))
+}
