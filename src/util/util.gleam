@@ -2,6 +2,7 @@ import gleam/pair
 import gleam/int
 import gleam/list
 import gleam/option.{Some, None}
+import gleam/order.{type Order, Gt}
 import gleam/string
 import gleam/dict.{type Dict}
 import gleam/regexp.{type Match}
@@ -72,6 +73,24 @@ pub fn invert(the_dict: Dict(a,b)) -> Dict(b,List(a))
       Some(i) -> [k, ..i]
       None    -> [k]
     }})})
+}
+
+//Returns Error(Nil) for empty the_dict
+pub fn key_for_max_value(the_dict: Dict(a, b), by compare: fn(b, b) -> Order) -> Result(a, Nil)
+{
+  let ret = dict.fold(the_dict, Error(Nil), fn(acc, k, v) {
+    case acc {
+      Error(_)               -> Ok(#(k, v))
+      Ok(#(_best_k, best_v)) -> case compare(v, best_v) {
+        Gt -> Ok(#(k, v))
+        _  -> acc
+      }
+    }
+  })
+  case ret {
+    Error(_)     -> Error(Nil)
+    Ok(#(k, _v)) -> Ok(k)
+  }
 }
 
 pub fn first_rest(the_list: List(a)) -> Result(#(a, List(a)), Nil)
@@ -205,10 +224,27 @@ pub fn get(l: List(a), n: Int) -> Result(a, Nil)
   list.first(list.drop(l, n))
 }
 
-pub fn insert_if_none(d: Dict(a, b), k: a, v: b) -> Dict(a, b)
+pub fn insert_if_unique(d: Dict(a, b), k: a, v: b) -> Dict(a, b)
 {
   case dict.has_key(d, k) {
     True  -> d
     False -> dict.insert(d, k, v)
+  }
+}
+
+//like dict.from_list but instead of using the last of duplicate keys, uses the first.
+pub fn from_list_ignore_dups(list: List(#(k, v))) -> Dict(k, v)
+{
+  list.fold(list, dict.new(), fn(acc, x) {
+    insert_if_unique(acc, x.0, x.1)
+  })
+}
+
+//can't believe I haven't needed this yet
+pub fn apply(input: a, times: Int, f: fn(a) -> a) -> a
+{
+  case times {
+    1 -> f(input)
+    _ -> apply(f(input), times - 1, f)
   }
 }
