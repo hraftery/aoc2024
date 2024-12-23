@@ -1,3 +1,4 @@
+import gleam/pair
 import gleam/int
 import gleam/list
 import gleam/option.{Some, None}
@@ -34,6 +35,22 @@ pub fn crop_until(from string: String, until substring: String) -> String
 pub fn split_until(list list: List(a), satisfying predicate: fn(a) -> Bool) -> #(List(a), List(a))
 {
   list.split_while(list, fn(a) { ! predicate(a) })
+}
+
+//List list.combination_pairs but order matters, so for each pair you also get the reverse
+pub fn permutation_pairs(items: List(a)) -> List(#(a, a))
+{
+  items
+  |> list.combination_pairs
+  |> list.flat_map(fn(x) { [x, pair.swap(x)] })
+}
+
+pub fn permutation_pairs_with_repetition(items: List(a)) -> List(#(a, a))
+{
+  let ppairs = permutation_pairs(items)
+  let rpairs = list.map(items, fn(i) { #(i, i) })
+
+  list.flatten([ppairs, rpairs])
 }
 
 //Opposite of list.contains

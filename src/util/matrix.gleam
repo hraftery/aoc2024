@@ -68,3 +68,21 @@ pub fn draw(mat: Matrix(Char), missing_char: Char)
     io.println("")
   })
 }
+
+
+pub type InverseMatrix(a) {
+  InverseMatrix(data: Dict(a, Coord), num_rows: Int, num_cols: Int)
+}
+
+pub fn inv_from_list_of_strings(str_list: List(String), ignore: Char) -> InverseMatrix(Char)
+{
+  let data = str_list
+  |> list.index_map(fn (row, y) { import_row(row, ignore, y) })
+  |> list.flatten
+  |> list.map(fn(x) { #(pair.second(x), pair.first(x)) })
+  |> dict.from_list
+
+  let assert Ok(first_row) = list.first(str_list)
+  InverseMatrix(data:data, num_rows: list.length(str_list),
+                           num_cols: list.length(string.to_graphemes(first_row))) //so arduous...
+}
