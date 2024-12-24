@@ -93,6 +93,19 @@ pub fn key_for_max_value(the_dict: Dict(a, b), by compare: fn(b, b) -> Order) ->
   }
 }
 
+pub fn max_elem(the_list: List(a), by compare: fn(a, a) -> Order) -> Result(a, Nil)
+{
+  list.fold(the_list, Error(Nil), fn(acc, x) {
+    case acc {
+      Error(_)    -> Ok(x)
+      Ok(max_x)   -> case compare(x, max_x) {
+        Gt -> Ok(x)
+        _  -> acc
+      }
+    }
+  })
+}
+
 pub fn first_rest(the_list: List(a)) -> Result(#(a, List(a)), Nil)
 {
   case the_list {
