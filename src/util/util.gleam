@@ -149,6 +149,14 @@ pub fn list_split_at(list list: List(a), at n: Int) -> List(List(a))
   [list.take(list, n), list.drop(list, n)]
 }
 
+pub fn list_difference(a: List(a), b: List(a)) -> List(a)
+{
+  a
+  |> list.filter(fn(elem) {
+    !list.contains(b, elem)
+  })
+}
+
 pub fn string_split_at(str str: String, at n: Int) -> List(String)
 {
   [string.drop_end(str, n), string.drop_start(str, n)]
@@ -265,4 +273,9 @@ pub fn apply(input: a, times: Int, f: fn(a) -> a) -> a
 pub fn common_elements(list1: List(a), list2: List(a)) -> List(a)
 {
   list.filter(list1, list.contains(list2, _))
+}
+
+pub fn is_bit_set(x: Int, bit_number: Int) -> Bool
+{
+  int.bitwise_and(x, int.bitwise_shift_left(1, bit_number)) != 0
 }
